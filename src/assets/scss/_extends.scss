@@ -1,0 +1,16 @@
+.template-dropdown {
+  background: $white;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  &__line {
+    margin: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-width: 0;
+  }
+  &__item {
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,163 @@
+@import "src/assets/scss/_variables.scss";
+@import "src/assets/scss/_animates.scss";
+
+@mixin text($family, $size, $color, $lineHeight) {
+  font-family: $family;
+  font-size: $size;
+  color: $color;
+  line-height: $lineHeight;
+  margin: 0;
+}
+
+@mixin input($padding, $radius, $background, $width: auto, $height: auto) {
+  outline: none;
+  border: none;
+  border-radius: $radius;
+  background: $background;
+  width: $width;
+  height: $height;
+  padding: $padding;
+}
+
+@mixin button($padding, $radius, $background, $color, $width: auto, $height: auto, $cursor: pointer) {
+  border: none;
+  outline: none;
+  cursor: $cursor;
+  width: $width;
+  height: $height;
+  padding: $padding;
+  border-radius: $radius;
+  background: $background;
+  color: $color;
+}
+
+@mixin list() {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@mixin link($family, $size, $color, $lineHeight) {
+  font-family: $family;
+  font-size: $size;
+  color: $color;
+  line-height: $lineHeight;
+  text-decoration: none;
+  outline: none;
+}
+
+@mixin flex($justify-content: flex-start, $align-items: stretch, $direction: row) {
+  display: flex;
+  justify-content: $justify-content;
+  align-items: $align-items;
+  flex-direction: $direction;
+}
+
+@mixin square($size, $radius: 0) {
+  width: $size !important;
+  height: $size;
+  border-radius: $radius;
+}
+
+@mixin scrollbar($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {
+  &::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $foreground-color;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $background-color;
+  }
+
+  & {
+    scrollbar-face-color: $foreground-color;
+    scrollbar-track-color: $background-color;
+  }
+}
+
+@mixin rotate($args, $noTranslate: false) {
+  @if $noTranslate {
+    animation: rotateNoTranslate $args;
+  } @else {
+    animation: rotate $args;
+  }
+}
+
+@mixin slideInLeft($args) {
+  animation: slideInLeft $args;
+}
+
+$min-tablet-width: 600px;
+$middle-tablet-width: 768px;
+$max-tablet-width: 992px;
+$super-max-tablet-width: 1024px;
+$min-desktop-width: 1280px;
+$medium-desktop-width: 1366px;
+$middle-desktop-width: 1440px;
+$max-desktop-width: 1600px;
+$super-max-desktop-width: 1920px;
+
+@mixin responsive($screen) {
+  @if $screen == small-tablet {
+    @media only screen and (min-width: $min-tablet-width + 1) and (max-width: $middle-tablet-width - 1) {
+      @content;
+    }
+  }
+  @if $screen == middle-tablet {
+    @media only screen and (min-width: $middle-tablet-width) and (max-width: $max-tablet-width - 1) {
+      @content;
+    }
+  }
+  @if $screen == large-tablet {
+    @media only screen and (min-width: $max-tablet-width) and (max-width: $super-max-tablet-width - 1) {
+      @content;
+    }
+  }
+  @if $screen == small-desktop {
+    @media only screen and (min-width: $super-max-tablet-width) {
+      @content;
+    }
+  }
+  @if $screen == medium-desktop {
+    @media only screen and (min-width: $min-desktop-width) {
+      @content;
+    }
+  }
+  @if $screen == middle-desktop {
+    @media only screen and (min-width: $medium-desktop-width) {
+      @content;
+    }
+  }
+  @if $screen == large-desktop {
+    @media only screen and (min-width: $middle-desktop-width) {
+      @content;
+    }
+  }
+  @if $screen == extra-large-desktop {
+    @media only screen and (min-width: $max-desktop-width) {
+      @content;
+    }
+  }
+  @if $screen == super-extra-large-desktop {
+    @media only screen and (min-width: $super-max-desktop-width) {
+      @content;
+    }
+  }
+  @if $screen == retina {
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      @content;
+    }
+  }
+}
+
+@mixin multiple-responsive($screens...) {
+  @each $screen in $screens {
+    @include responsive($screen) {
+      @content;
+    }
+  }
+}
