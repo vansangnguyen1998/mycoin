@@ -4,7 +4,7 @@ import CIcon from '@coreui/icons-react'
 const _nav =  [
   {
     _tag: 'CSidebarNavItem',
-    name: 'Category',
+    name: 'Đào token',
     to: '/category',
     icon: 'cil-calculator'
   },

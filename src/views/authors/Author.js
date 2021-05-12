@@ -87,7 +87,9 @@ const Author = () => {
   const [appState, setAppState] = useState({
     loading: false
   });
+
   const [type, setType] = useState('');
+
   const [author, setAuthor] = useMergeState({
     code: "",
     name: "",
@@ -100,6 +102,7 @@ const Author = () => {
   });
 
   const listAuthor = useSelector((state) => state.author.listAuthor);
+
   useEffect(() => {
     setAppState({ loading: true });
     dispatch(fetchListAuthorIfNeeded());
@@ -468,6 +471,7 @@ const Author = () => {
                       </CCard>
                     </CCol>
                   </CRow>
+
                 </CTabPane>
               </CTabContent>
             </CTabs>

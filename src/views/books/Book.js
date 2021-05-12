@@ -1,7 +1,7 @@
 /**
- * File: \src\views\books\Book.js
+ * File: \src\views\Book\Book.js
  * Project: TKDG
- * Created Date: Sunday, April 18th 2021, 1:04:46 pm
+ * Created Date: Saturday, April 17th 2021, 11:26:35 pm
  * Author: Văn Sang
  * -----
  * Last Modified:
@@ -9,7 +9,7 @@
  * ------------------------------------
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CCol,
   CNav,
@@ -22,46 +22,57 @@ import {
   CCardBody,
   CTabs,
   CCardHeader,
-  CBadge,
-  CDataTable,
   CButton,
   CCardFooter,
   CForm,
   CFormGroup,
-  CTextarea,
   CInput,
-  CInputFile,
   CLabel,
-  CSelect
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import usersData from "../users/UsersData";
-
-const getBadge = (status) => {
-  switch (status) {
-    case "Active":
-      return "success";
-    case "Inactive":
-      return "secondary";
-    case "Pending":
-      return "warning";
-    case "Banned":
-      return "danger";
-    default:
-      return "primary";
-  }
-};
-const fields = ["name", "registered", "role", "status"];
+import api from "src/services/api";
+import { useMergeState } from "src/components/Hooks";
 
 const Book = () => {
   const [active, setActive] = useState(0);
+  const [appState, setAppState] = useState({
+    loading: false,
+  });
 
-  const title = "add new Book";
+  const [author, setAuthor] = useMergeState({
+    privateKey: sessionStorage.getItem("privateKey"),
+    publicKey: sessionStorage.getItem("publicKey"),
+    publicKeyRecipient: "",
+    amount: 0,
+  });
+  const handleChangeAuthor = (event) => {
+    const { name, value } = event.target;
+    setAuthor({ [name]: value });
+  };
+
+  const handleClickSubmit = async () => {
+    setAppState({ loading: true });
+    api
+      .post(`/transaction/broadcast`, {
+        privKey: author.privateKey,
+        sender: author.publicKey,
+        recipient: author.publicKeyRecipient,
+        amount: author.amount,
+      })
+      .then((res) => {
+        console.log(res);
+        alert(`giao dịch thành công.`);
+      });
+    setAppState({ loading: false });
+  };
+
   return (
     <CRow>
       <CCol xs="12" md="12" className="mb-4">
         <CCard>
-          <CCardHeader>Book Book</CCardHeader>
+          <CCardHeader>
+            Giao dịch chuyển tài nguyên cho địa chỉ khác..
+          </CCardHeader>
           <CCardBody>
             <CTabs
               activeTab={active}
@@ -71,54 +82,18 @@ const Book = () => {
                 <CNavItem>
                   <CNavLink>
                     <CIcon name="cil-list-rich" />
-                    {active === 0 && " List Book"}
-                  </CNavLink>
-                </CNavItem>
-                <CNavItem>
-                  <CNavLink>
-                    <CIcon name="cil-list-rich" />
-                    {active === 1 && " Add new Book"}
+                    {active === 0 && " Giao dịch mycoin"}
                   </CNavLink>
                 </CNavItem>
               </CNav>
               <CTabContent>
                 <CTabPane>
                   <CRow>
-                    <CCol>
-                      <CCard>
-                        <CCardHeader>Combined All dark Table</CCardHeader>
-                        <CCardBody>
-                          <CDataTable
-                            items={usersData}
-                            fields={fields}
-                            dark
-                            hover
-                            striped
-                            sorter
-                            bordered
-                            size="sm"
-                            itemsPerPage={10}
-                            pagination
-                            scopedSlots={{
-                              status: (item) => (
-                                <td>
-                                  <CBadge color={getBadge(item.status)}>
-                                    {item.status}
-                                  </CBadge>
-                                </td>
-                              ),
-                            }}
-                          />
-                        </CCardBody>
-                      </CCard>
-                    </CCol>
-                  </CRow>
-                </CTabPane>
-                <CTabPane>
-                  <CRow>
                     <CCol xs="12" md="12">
                       <CCard>
-                        <CCardHeader>{title}</CCardHeader>
+                        <CCardHeader>
+                          Nhập các thông tin sau để thực hiện giao dịch.
+                        </CCardHeader>
                         <CCardBody>
                           <CForm
                             action=""
@@ -126,242 +101,91 @@ const Book = () => {
                             encType="multipart/form-data"
                             className="form-horizontal"
                           >
-                            <CRow>
-                              <CCol xs="6" md="6">
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel>Static</CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <p className="form-control-static">
-                                      Username
-                                    </p>
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">Code</CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="Code Book"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">Title</CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="Title Book"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Subject
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="Subject Book"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Language
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="Language Book"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Publish year
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="1998.."
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">Name</CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="Name Book"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Page number
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="Page number Book"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="textarea-input">
-                                      Description
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CTextarea
-                                      name="textarea-input"
-                                      id="textarea-input"
-                                      rows="9"
-                                      placeholder="Description..."
-                                    />
-                                  </CCol>
-                                </CFormGroup>
+                            <CFormGroup row>
+                              <CCol md="3">
+                                <CLabel htmlFor="privateKey">
+                                  private key người gửi
+                                </CLabel>
                               </CCol>
-                              <CCol xs="6" md="6">
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel>Author</CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CSelect custom name="select" id="select">
-                                      <option value="0">Please select</option>
-                                      <option value="1">Option #1</option>
-                                      <option value="2">Option #2</option>
-                                      <option value="3">Option #3</option>
-                                    </CSelect>
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Category
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CSelect custom name="select" id="select">
-                                      <option value="0">Please select</option>
-                                      <option value="1">Option #1</option>
-                                      <option value="2">Option #2</option>
-                                      <option value="3">Option #3</option>
-                                    </CSelect>
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Publisher
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CSelect custom name="select" id="select">
-                                      <option value="0">Please select</option>
-                                      <option value="1">Option #1</option>
-                                      <option value="2">Option #2</option>
-                                      <option value="3">Option #3</option>
-                                    </CSelect>
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Price book
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="price Book"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Rental price
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="Rental price Book"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel htmlFor="text-input">
-                                      Star rating
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInput
-                                      id="text-input"
-                                      name="text-input"
-                                      placeholder="4"
-                                    />
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row>
-                                  <CCol md="3">
-                                    <CLabel>Multiple File input</CLabel>
-                                  </CCol>
-                                  <CCol xs="12" md="9">
-                                    <CInputFile
-                                      id="file-multiple-input"
-                                      name="file-multiple-input"
-                                      multiple
-                                      custom
-                                    />
-                                    <CLabel
-                                      htmlFor="file-multiple-input"
-                                      variant="custom-file"
-                                    >
-                                      Choose Files...
-                                    </CLabel>
-                                  </CCol>
-                                </CFormGroup>
+                              <CCol xs="12" md="9">
+                                <CInput
+                                  id="privateKey"
+                                  name="privateKey"
+                                  placeholder="privateKey...."
+                                  value={author.privateKey}
+                                  onChange={handleChangeAuthor}
+                                />
                               </CCol>
-                            </CRow>
+                            </CFormGroup>
+                            <CFormGroup row>
+                              <CCol md="3">
+                                <CLabel htmlFor="publicKey">
+                                  public key người gửi
+                                </CLabel>
+                              </CCol>
+                              <CCol xs="12" md="9">
+                                <CInput
+                                  id="publicKey"
+                                  name="publicKey"
+                                  placeholder="publicKey"
+                                  value={author.publicKey}
+                                  onChange={handleChangeAuthor}
+                                />
+                              </CCol>
+                            </CFormGroup>
+                            <CFormGroup row>
+                              <CCol md="3">
+                                <CLabel htmlFor="publicKeyRecipient">
+                                  public key người nhận
+                                </CLabel>
+                              </CCol>
+                              <CCol xs="12" md="9">
+                                <CInput
+                                  id="publicKeyRecipient"
+                                  name="publicKeyRecipient"
+                                  placeholder="publicKeyRecipient..."
+                                  value={author.publicKeyRecipient}
+                                  onChange={handleChangeAuthor}
+                                />
+                              </CCol>
+                            </CFormGroup>
+                            <CFormGroup row>
+                              <CCol md="3">
+                                <CLabel htmlFor="publicKeyRecipient">
+                                  Số coin gửi
+                                </CLabel>
+                              </CCol>
+                              <CCol xs="12" md="9">
+                                <CInput
+                                  id="amount"
+                                  name="amount"
+                                  placeholder="amount..."
+                                  value={author.amount}
+                                  onChange={handleChangeAuthor}
+                                />
+                              </CCol>
+                            </CFormGroup>
                           </CForm>
                         </CCardBody>
-
                         <CCardFooter>
-                          <CButton type="submit" size="sm" color="success">
-                            <CIcon name="cil-scrubber" /> Submit
+                          <CButton
+                            type="button"
+                            size="sm"
+                            disabled={
+                              !(
+                                !!author.privateKey &&
+                                !!author.publicKey &&
+                                !!author.publicKeyRecipient &&
+                                !!author.amount
+                              )
+                            }
+                            onClick={handleClickSubmit}
+                            color="success"
+                          >
+                            <CIcon name="cil-scrubber" /> Xác nhận giao dịch
                           </CButton>
-                          <CButton type="reset" size="sm" color="danger">
-                            <CIcon name="cil-ban" /> Reset
+                          <CButton type="button" size="sm" color="danger">
+                            <CIcon name="cil-ban" /> Hủy giao dịch
                           </CButton>
                         </CCardFooter>
                       </CCard>

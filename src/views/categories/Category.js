@@ -9,7 +9,7 @@
  * ------------------------------------
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CCol,
   CNav,
@@ -25,40 +25,83 @@ import {
   CBadge,
   CDataTable,
   CButton,
-  CCardFooter,
-  CForm,
-  CFormGroup,
-  CTextarea,
-  CInput,
-  CLabel,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import usersData from "../users/UsersData";
+import api from "src/services/api";
 
-const getBadge = (status) => {
-  switch (status) {
-    case "Active":
-      return "success";
-    case "Inactive":
-      return "secondary";
-    case "Pending":
-      return "warning";
-    case "Banned":
-      return "danger";
-    default:
-      return "primary";
-  }
-};
-const fields = ["name", "registered", "role", "status"];
+const fields = [
+  {
+    key: "amount",
+    label: "Tổng",
+    sorter: true,
+    filter: true,
+  },
+  {
+    key: "recipient",
+    label: "Người nhận",
+    sorter: true,
+    filter: true,
+  },
+  {
+    key: "sender",
+    label: "Người gửi",
+    sorter: true,
+    filter: true,
+  },
+  {
+    key: "transactionId",
+    label: "ID Giao dịch",
+    sorter: true,
+    filter: true,
+  },
+];
 
 const Category = () => {
   const [active, setActive] = useState(0);
-  const title = 'add new category book'
+  const [appState, setAppState] = useState({
+    loading: false,
+  });
+
+  const [pendingTransaction, setPendingTransaction] = useState([]);
+  useEffect(() => {
+    setAppState({ loading: true });
+
+    api.get("/api/transactionPending").then((data) => {
+      setPendingTransaction(data?.data?.data);
+    });
+
+    setAppState({ loading: false });
+  }, []);
+
+  const handleClickSubmit = async () => {
+    setAppState({ loading: true });
+    api
+      .post(`/hashKeys`, {
+        key1: sessionStorage.getItem("privateKey"),
+        key2: sessionStorage.getItem("publicKey"),
+      })
+      .then((data) => {
+        if(!data.data.note){
+          alert("Thông tin account k đúng vui lòng đăng nhập lại!");
+          //TODO replcate link
+          return;
+        }
+        api.get('/mine').then(data=>{
+          api.get("/api/transactionPending").then((data) => {
+            setPendingTransaction(data?.data?.data);
+          });
+        })
+
+      });
+    setAppState({ loading: false });
+  };
+
   return (
     <CRow>
       <CCol xs="12" md="12" className="mb-4">
         <CCard>
-          <CCardHeader>Book Category</CCardHeader>
+          <CCardHeader>Các giao dịch gần đây.</CCardHeader>
           <CCardBody>
             <CTabs
               activeTab={active}
@@ -71,22 +114,27 @@ const Category = () => {
                     {active === 0 && " List category book"}
                   </CNavLink>
                 </CNavItem>
-                <CNavItem>
-                  <CNavLink>
-                  <CIcon name="cil-list-rich" />
-                    {active === 1 && " Add new category book"}
-                  </CNavLink>
-                </CNavItem>
+                <CButton
+                  color="info"
+                  variant="outline"
+                  shape="square"
+                  onClick={handleClickSubmit}
+                  size="sm"
+                >
+                  Thực hiện khai thác
+                </CButton>
               </CNav>
               <CTabContent>
                 <CTabPane>
                   <CRow>
                     <CCol>
                       <CCard>
-                        <CCardHeader>Combined All dark Table</CCardHeader>
+                        <CCardHeader>
+                          <div></div>
+                        </CCardHeader>
                         <CCardBody>
                           <CDataTable
-                            items={usersData}
+                            items={pendingTransaction}
                             fields={fields}
                             dark
                             hover
@@ -96,84 +144,10 @@ const Category = () => {
                             size="sm"
                             itemsPerPage={10}
                             pagination
-                            scopedSlots={{
-                              status: (item) => (
-                                <td>
-                                  <CBadge color={getBadge(item.status)}>
-                                    {item.status}
-                                  </CBadge>
-                                </td>
-                              ),
-                            }}
                           />
                         </CCardBody>
                       </CCard>
                     </CCol>
-                  </CRow>
-                </CTabPane>
-                <CTabPane>
-                  <CRow>
-                    <CCol xs="12" md="12">
-                      <CCard>
-                        <CCardHeader>
-                          {title}
-                        </CCardHeader>
-                        <CCardBody>
-                          <CForm
-                            action=""
-                            method="post"
-                            encType="multipart/form-data"
-                            className="form-horizontal"
-                          >
-                            <CFormGroup row>
-                              <CCol md="3">
-                                <CLabel>Static</CLabel>
-                              </CCol>
-                              <CCol xs="12" md="9">
-                                <p className="form-control-static">Username</p>
-                              </CCol>
-                            </CFormGroup>
-                            <CFormGroup row>
-                              <CCol md="3">
-                                <CLabel htmlFor="text-input">Name</CLabel>
-                              </CCol>
-                              <CCol xs="12" md="9">
-                                <CInput
-                                  id="text-input"
-                                  name="text-input"
-                                  placeholder="Name category"
-                                />
-                                {/* <CFormText>This is a help text</CFormText> */}
-                              </CCol>
-                            </CFormGroup>
-                            <CFormGroup row>
-                              <CCol md="3">
-                                <CLabel htmlFor="textarea-input">
-                                  Description
-                                </CLabel>
-                              </CCol>
-                              <CCol xs="12" md="9">
-                                <CTextarea
-                                  name="textarea-input"
-                                  id="textarea-input"
-                                  rows="9"
-                                  placeholder="Description..."
-                                />
-                              </CCol>
-                            </CFormGroup>
-                          </CForm>
-                        </CCardBody>
-                        <CCardFooter>
-                          <CButton type="submit" size="sm" color="success">
-                            <CIcon name="cil-scrubber" /> Submit
-                          </CButton>
-                          <CButton type="reset" size="sm" color="danger">
-                            <CIcon name="cil-ban" /> Reset
-                          </CButton>
-                        </CCardFooter>
-                      </CCard>
-                    </CCol>
-
                   </CRow>
                 </CTabPane>
               </CTabContent>
