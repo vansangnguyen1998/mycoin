@@ -16,13 +16,13 @@ const _nav =  [
   },
   {
     _tag: 'CSidebarNavItem',
-    name: 'Publisher',
+    name: 'lịch sử giao dịch',
     to: '/publisher',
     icon: 'cil-calculator'
   },
   {
     _tag: 'CSidebarNavItem',
-    name: 'Book',
+    name: 'Giao dịch',
     to: '/book',
     icon: 'cil-calculator'
   },

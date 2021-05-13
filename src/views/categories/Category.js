@@ -76,10 +76,11 @@ const Category = () => {
 
   const handleClickSubmit = async () => {
     setAppState({ loading: true });
+    let publicKey = sessionStorage.getItem("publicKey")
     api
       .post(`/hashKeys`, {
         key1: sessionStorage.getItem("privateKey"),
-        key2: sessionStorage.getItem("publicKey"),
+        key2: publicKey,
       })
       .then((data) => {
         if(!data.data.note){
@@ -87,7 +88,7 @@ const Category = () => {
           //TODO replcate link
           return;
         }
-        api.get('/mine').then(data=>{
+        api.get(`/mine?publicKey=${publicKey}`).then(data=>{
           api.get("/api/transactionPending").then((data) => {
             setPendingTransaction(data?.data?.data);
           });

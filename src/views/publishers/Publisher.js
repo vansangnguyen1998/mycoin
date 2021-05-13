@@ -1,5 +1,5 @@
 /**
- * File: \src\views\Publisher\Publisher.js
+ * File: \src\views\Category\Category.js
  * Project: TKDG
  * Created Date: Saturday, April 17th 2021, 11:26:35 pm
  * Author: Văn Sang
@@ -8,7 +8,8 @@
  * Modified By:
  * ------------------------------------
  */
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import {
   CCol,
   CNav,
@@ -21,44 +22,60 @@ import {
   CCardBody,
   CTabs,
   CCardHeader,
-  CBadge,
   CDataTable,
   CButton,
-  CCardFooter,
-  CForm,
-  CFormGroup,
-  CTextarea,
-  CInput,
-  CLabel,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import usersData from "../users/UsersData";
+import api from "src/services/api";
 
-const getBadge = (status) => {
-  switch (status) {
-    case "Active":
-      return "success";
-    case "Inactive":
-      return "secondary";
-    case "Pending":
-      return "warning";
-    case "Banned":
-      return "danger";
-    default:
-      return "primary";
-  }
-};
-const fields = ["name", "registered", "role", "status"];
+const fields = [
+  {
+    key: "amount",
+    label: "Tổng",
+    sorter: true,
+    filter: true,
+  },
+  {
+    key: "recipient",
+    label: "Người nhận",
+    sorter: true,
+    filter: true,
+  },
+  {
+    key: "sender",
+    label: "Người gửi",
+    sorter: true,
+    filter: true,
+  },
+  {
+    key: "transactionId",
+    label: "ID Giao dịch",
+    sorter: true,
+    filter: true,
+  },
+];
 
-const Publisher = () => {
+const HistoryTransaction = () => {
   const [active, setActive] = useState(0);
+  const [appState, setAppState] = useState({
+    loading: false,
+  });
 
-    const title = 'add new Publisher'
+  const [pendingTransaction, setPendingTransaction] = useState([]);
+  useEffect(() => {
+    setAppState({ loading: true });
+
+    api.get("/address").then((data) => {
+      setPendingTransaction(data?.data?.addressData?.addressTransactions);
+    });
+    setAppState({ loading: false });
+  }, []);
+
   return (
     <CRow>
       <CCol xs="12" md="12" className="mb-4">
         <CCard>
-          <CCardHeader>Book Publisher</CCardHeader>
+          <CCardHeader>Các giao dịch gần đây.</CCardHeader>
           <CCardBody>
             <CTabs
               activeTab={active}
@@ -68,13 +85,7 @@ const Publisher = () => {
                 <CNavItem>
                   <CNavLink>
                     <CIcon name="cil-list-rich" />
-                    {active === 0 && " List Publisher"}
-                  </CNavLink>
-                </CNavItem>
-                <CNavItem>
-                  <CNavLink>
-                  <CIcon name="cil-list-rich" />
-                    {active === 1 && " Add new Publisher"}
+                    {active === 0 && " List HistoryTransaction"}
                   </CNavLink>
                 </CNavItem>
               </CNav>
@@ -83,10 +94,12 @@ const Publisher = () => {
                   <CRow>
                     <CCol>
                       <CCard>
-                        <CCardHeader>Combined All dark Table</CCardHeader>
+                        <CCardHeader>
+                          <div></div>
+                        </CCardHeader>
                         <CCardBody>
                           <CDataTable
-                            items={usersData}
+                            items={pendingTransaction}
                             fields={fields}
                             dark
                             hover
@@ -96,106 +109,11 @@ const Publisher = () => {
                             size="sm"
                             itemsPerPage={10}
                             pagination
-                            scopedSlots={{
-                              status: (item) => (
-                                <td>
-                                  <CBadge color={getBadge(item.status)}>
-                                    {item.status}
-                                  </CBadge>
-                                </td>
-                              ),
-                            }}
                           />
                         </CCardBody>
                       </CCard>
                     </CCol>
                   </CRow>
-                </CTabPane>
-                <CTabPane>
-                <CRow>
-                    <CCol xs="12" md="12">
-                      <CCard>
-                        <CCardHeader>{title}</CCardHeader>
-                        <CCardBody>
-                          <CForm
-                            action=""
-                            method="post"
-                            encType="multipart/form-data"
-                            className="form-horizontal"
-                          >
-                            <CFormGroup row>
-                              <CCol md="3">
-                                <CLabel>Static</CLabel>
-                              </CCol>
-                              <CCol xs="12" md="9">
-                                <p className="form-control-static">Username</p>
-                              </CCol>
-                            </CFormGroup>
-                            <CFormGroup row>
-                              <CCol md="3">
-                                <CLabel htmlFor="text-input">Code</CLabel>
-                              </CCol>
-                              <CCol xs="12" md="9">
-                                <CInput
-                                  id="text-input"
-                                  name="text-input"
-                                  placeholder="Code publisher"
-                                />
-                              </CCol>
-                            </CFormGroup>
-                            <CFormGroup row>
-                              <CCol md="3">
-                                <CLabel htmlFor="text-input">Name</CLabel>
-                              </CCol>
-                              <CCol xs="12" md="9">
-                                <CInput
-                                  id="text-input"
-                                  name="text-input"
-                                  placeholder="Name publisher"
-                                />
-                              </CCol>
-                            </CFormGroup>
-                            <CFormGroup row>
-                              <CCol md="3">
-                                <CLabel htmlFor="text-input">Address</CLabel>
-                              </CCol>
-                              <CCol xs="12" md="9">
-                                <CInput
-                                  id="text-input"
-                                  name="text-input"
-                                  placeholder="Address publisher"
-                                />
-                              </CCol>
-                            </CFormGroup>
-                            <CFormGroup row>
-                              <CCol md="3">
-                                <CLabel htmlFor="textarea-input">
-                                  Description
-                                </CLabel>
-                              </CCol>
-                              <CCol xs="12" md="9">
-                                <CTextarea
-                                  name="textarea-input"
-                                  id="textarea-input"
-                                  rows="9"
-                                  placeholder="Description..."
-                                />
-                              </CCol>
-                            </CFormGroup>
-                          </CForm>
-                        </CCardBody>
-                        <CCardFooter>
-                          <CButton type="submit" size="sm" color="success">
-                            <CIcon name="cil-scrubber" /> Submit
-                          </CButton>
-                          <CButton type="reset" size="sm" color="danger">
-                            <CIcon name="cil-ban" /> Reset
-                          </CButton>
-                        </CCardFooter>
-                      </CCard>
-                    </CCol>
-                  </CRow>
-
                 </CTabPane>
               </CTabContent>
             </CTabs>
@@ -206,4 +124,4 @@ const Publisher = () => {
   );
 };
 
-export default Publisher;
+export default HistoryTransaction;
