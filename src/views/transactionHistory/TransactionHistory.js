@@ -1,5 +1,5 @@
 /**
- * File: \src\views\Category\Category.js
+ * File: \src\views\Mine\Mine.js
  * Project: TKDG
  * Created Date: Saturday, April 17th 2021, 11:26:35 pm
  * Author: Văn Sang
@@ -22,12 +22,9 @@ import {
   CCardBody,
   CTabs,
   CCardHeader,
-  CBadge,
   CDataTable,
-  CButton,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import usersData from "../users/UsersData";
 import api from "src/services/api";
 
 const fields = [
@@ -57,7 +54,7 @@ const fields = [
   },
 ];
 
-const Category = () => {
+const HistoryTransaction = () => {
   const [active, setActive] = useState(0);
   const [appState, setAppState] = useState({
     loading: false,
@@ -67,36 +64,11 @@ const Category = () => {
   useEffect(() => {
     setAppState({ loading: true });
 
-    api.get("/api/transactionPending").then((data) => {
-      setPendingTransaction(data?.data?.data);
+    api.get("/address").then((data) => {
+      setPendingTransaction(data?.data?.addressData?.addressTransactions.reverse());
+      setAppState({ loading: false });
     });
-
-    setAppState({ loading: false });
   }, []);
-
-  const handleClickSubmit = async () => {
-    setAppState({ loading: true });
-    let publicKey = sessionStorage.getItem("publicKey")
-    api
-      .post(`/hashKeys`, {
-        key1: sessionStorage.getItem("privateKey"),
-        key2: publicKey,
-      })
-      .then((data) => {
-        if(!data.data.note){
-          alert("Thông tin account k đúng vui lòng đăng nhập lại!");
-          //TODO replcate link
-          return;
-        }
-        api.get(`/mine?publicKey=${publicKey}`).then(data=>{
-          api.get("/api/transactionPending").then((data) => {
-            setPendingTransaction(data?.data?.data);
-          });
-        })
-
-      });
-    setAppState({ loading: false });
-  };
 
   return (
     <CRow>
@@ -112,18 +84,9 @@ const Category = () => {
                 <CNavItem>
                   <CNavLink>
                     <CIcon name="cil-list-rich" />
-                    {active === 0 && " List category book"}
+                    {active === 0 && " List HistoryTransaction"}
                   </CNavLink>
                 </CNavItem>
-                <CButton
-                  color="info"
-                  variant="outline"
-                  shape="square"
-                  onClick={handleClickSubmit}
-                  size="sm"
-                >
-                  Thực hiện khai thác
-                </CButton>
               </CNav>
               <CTabContent>
                 <CTabPane>
@@ -139,6 +102,8 @@ const Category = () => {
                             fields={fields}
                             dark
                             hover
+                            columnFilter
+                            tableFilter
                             striped
                             sorter
                             bordered
@@ -160,4 +125,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default HistoryTransaction;

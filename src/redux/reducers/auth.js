@@ -13,9 +13,8 @@
  import Author from "../actionTypes/author";
 
  const initialState = {
-   isInitialized: false,
-   loadingR: false,
-   key: {privateKey: '', publicKey : ''}
+  isAuthenticated: !!sessionStorage.getItem('privateKey'),
+  loading        : false
  };
 
  const auth = (state = initialState, action) => {

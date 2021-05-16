@@ -1,5 +1,5 @@
 /**
- * File: \src\views\Category\Category.js
+ * File: \src\views\Mine\Mine.js
  * Project: TKDG
  * Created Date: Saturday, April 17th 2021, 11:26:35 pm
  * Author: Văn Sang
@@ -9,7 +9,8 @@
  * ------------------------------------
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
+
 import {
   CCol,
   CNav,
@@ -54,22 +55,43 @@ const fields = [
     filter: true,
   },
 ];
-
-const HistoryTransaction = () => {
+const Mine = () => {
   const [active, setActive] = useState(0);
   const [appState, setAppState] = useState({
     loading: false,
   });
-
   const [pendingTransaction, setPendingTransaction] = useState([]);
   useEffect(() => {
     setAppState({ loading: true });
-
-    api.get("/address").then((data) => {
-      setPendingTransaction(data?.data?.addressData?.addressTransactions);
+    api.get("/api/transactionPending").then((data) => {
+      setPendingTransaction(data?.data?.data);
     });
     setAppState({ loading: false });
   }, []);
+
+  const handleClickSubmit = async () => {
+    setAppState({ loading: true });
+    let publicKey = sessionStorage.getItem("publicKey")
+    api
+      .post(`/hashKeys`, {
+        key1: sessionStorage.getItem("privateKey"),
+        key2: publicKey,
+      })
+      .then((data) => {
+        if(!data.data.note){
+          alert("Thông tin account k đúng vui lòng đăng nhập lại!");
+          //TODO replcate link
+          return;
+        }
+        api.get(`/mine?publicKey=${publicKey}`).then(data=>{
+          api.get("/api/transactionPending").then((data) => {
+            setPendingTransaction(data?.data?.data);
+          });
+        })
+
+      });
+    setAppState({ loading: false });
+  };
 
   return (
     <CRow>
@@ -85,9 +107,18 @@ const HistoryTransaction = () => {
                 <CNavItem>
                   <CNavLink>
                     <CIcon name="cil-list-rich" />
-                    {active === 0 && " List HistoryTransaction"}
+                    {active === 0 && " List mine book"}
                   </CNavLink>
                 </CNavItem>
+                <CButton
+                  color="info"
+                  variant="outline"
+                  shape="square"
+                  onClick={handleClickSubmit}
+                  size="sm"
+                >
+                  Thực hiện khai thác
+                </CButton>
               </CNav>
               <CTabContent>
                 <CTabPane>
@@ -124,4 +155,4 @@ const HistoryTransaction = () => {
   );
 };
 
-export default HistoryTransaction;
+export default Mine;

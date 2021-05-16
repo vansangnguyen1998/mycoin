@@ -1,5 +1,5 @@
 /**
- * File: \src\views\Book\Book.js
+ * File: \src\views\Transaction\Transaction.js
  * Project: TKDG
  * Created Date: Saturday, April 17th 2021, 11:26:35 pm
  * Author: Văn Sang
@@ -9,7 +9,7 @@
  * ------------------------------------
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   CCol,
   CNav,
@@ -33,7 +33,7 @@ import CIcon from "@coreui/icons-react";
 import api from "src/services/api";
 import { useMergeState } from "src/components/Hooks";
 
-const Book = () => {
+const Transaction = () => {
   const [active, setActive] = useState(0);
   const [appState, setAppState] = useState({
     loading: false,
@@ -201,4 +201,4 @@ const Book = () => {
   );
 };
 
-export default Book;
+export default Transaction;
