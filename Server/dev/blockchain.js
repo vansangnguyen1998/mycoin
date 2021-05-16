@@ -7,7 +7,7 @@
 const uuid = require('uuid/v1'); //generate unique transaction id.
 const sha256 = require('sha256');
 const currentNodeUrl = process.argv[3];
-
+const defaultMoney = 12.5
 
 /*function constructor for my Blockchain.*/
 function Blockchain(socketID) {
@@ -20,6 +20,18 @@ function Blockchain(socketID) {
     this.createNewBlock(100, '0', '0'); //Genesis block.
 }
 
+Blockchain.prototype.getDifficult = function(){
+    let lastBlock = this.getLastBlock()
+    let index = lastBlock.index
+    return Math.floor(index / 10) + 1
+}
+
+Blockchain.prototype.getBonusMoney= function(){
+    let lastBlock = this.getLastBlock()
+    let index = lastBlock.index
+    let difficult = Math.floor(index / 30) + 1
+    return difficult * defaultMoney
+}
 /*init a new block to the chain and insert pending transactions into the block.*/
 Blockchain.prototype.createNewBlock = function (nonce, previousBlockHash, hash) {
     const newBlock = {
@@ -46,11 +58,10 @@ Blockchain.prototype.createNewTransaction = function (amount, sender, recipient)
     const newTransaction = {
         transactionId: uuid().split('-').join(''),
         amount: amount,
-        date: new Date().getDay().toString() + "." + new Date().getMonth().toString() + "." + new Date().getFullYear().toString(),
+        date: new Date().toLocaleString(),
         sender: sender,
         recipient: recipient
     }
-
     return newTransaction;
 }
 
@@ -69,8 +80,9 @@ Blockchain.prototype.hashBlock = function (previousBlockHash, currentBlockData, 
 /*Proof Of Work method.*/
 Blockchain.prototype.proofOfWork = function (previousBlockHash, currentBlockData) {
     let nonce = 0;
+    let difficult = this.getDifficult()
     let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
-    while (hash.substring(0, 4) !== '0000') { //generate a new hash until the first 4 chars of the hash will be equals to '0000'. 
+    while (hash.substring(0, difficult) !== Array(difficult + 1).join("0")) { //generate a new hash until the first 4 chars of the hash will be equals to '0000'.
         nonce++;
         hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
         console.log(hash);
@@ -81,16 +93,16 @@ Blockchain.prototype.proofOfWork = function (previousBlockHash, currentBlockData
 Blockchain.prototype.chainIsValid = function (blockchain) {
 
     let validChain = true;
-
+    let difficult = this.getDifficult()
     for (var i = 1; i < blockchain.length; i++) {
         const currentBlock = blockchain[i];
         const prevBlock = blockchain[i - 1];
         const blockHash = this.hashBlock(prevBlock['hash'], { transactions: currentBlock['transactions'], index: currentBlock['index'] }, currentBlock['nonce']);
-        if (blockHash.substring(0, 4) !== '0000') validChain = false;
+        if (hash.substring(0, difficult) !== Array(difficult + 1).join("0")) validChain = false;
         if (currentBlock['previousBlockHash'] !== prevBlock['hash']) validChain = false;
     };
 
-    //check genesis block validation 
+    //check genesis block validation
     const genesisBlock = blockchain[0];
     const correctNonce = genesisBlock['nonce'] === 100;
     const correctPreviousBlockHash = genesisBlock['previousBlockHash'] === '0';
@@ -138,7 +150,9 @@ Blockchain.prototype.getAddressData = function (address) {
     const addressTransactions = [];
     this.chain.forEach(block => {
         block.transactions.forEach(transaction => {
-            if (transaction.sender === address || transaction.recipient === address) {
+            if(!address){
+                addressTransactions.push(transaction);
+            }else if (transaction.sender === address || transaction.recipient === address) {
                 addressTransactions.push(transaction); //push all tranasction by sender or recipient into array.
             };
         });
@@ -149,7 +163,7 @@ Blockchain.prototype.getAddressData = function (address) {
     }
 
     var amountArr = [];
-    
+
     let balance = 0;
     addressTransactions.forEach(transaction => {
         if (transaction.recipient === address) {
@@ -160,7 +174,7 @@ Blockchain.prototype.getAddressData = function (address) {
             balance -= transaction.amount;
             amountArr.push(balance);
         }
-    
+
     });
 
     return {
