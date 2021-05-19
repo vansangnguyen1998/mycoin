@@ -1,6 +1,6 @@
 /**
  * File: \src\reducers.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Saturday, April 24th 2021, 11:23:41 am
  * Author: Văn Sang
  * -----

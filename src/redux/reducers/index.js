@@ -1,6 +1,6 @@
 /**
  * File: \src\redux\reducers\inde.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Wednesday, April 21st 2021, 1:20:47 pm
  * Author: Văn Sang
  * -----

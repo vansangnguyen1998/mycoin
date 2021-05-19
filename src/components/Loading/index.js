@@ -1,6 +1,6 @@
 /**
  * File: \src\components\Loading\index.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Wednesday, April 21st 2021, 3:34:00 pm
  * Author: Văn Sang
  * -----

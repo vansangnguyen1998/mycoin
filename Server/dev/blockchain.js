@@ -29,7 +29,7 @@ Blockchain.prototype.getDifficult = function(){
 Blockchain.prototype.getBonusMoney= function(){
     let lastBlock = this.getLastBlock()
     let index = lastBlock.index
-    let difficult = Math.floor(index / 30) + 1
+    let difficult = Math.floor(index / 20) + 1
     return difficult * defaultMoney
 }
 /*init a new block to the chain and insert pending transactions into the block.*/

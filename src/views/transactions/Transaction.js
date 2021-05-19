@@ -1,6 +1,6 @@
 /**
  * File: \src\views\Transaction\Transaction.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Saturday, April 17th 2021, 11:26:35 pm
  * Author: Văn Sang
  * -----

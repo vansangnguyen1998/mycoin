@@ -1,6 +1,6 @@
 /**
  * File: \src\redux\actionTypes\auth.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Tuesday, May 11th 2021, 10:00:56 pm
  * Author: Văn Sang
  * -----

@@ -62,12 +62,11 @@ const Login = () => {
   const handleRegister = async () => {
     const res = await dispatch(registerKey());
     const { status, data } = res;
-    if (status) {
-      let {privateKey, publicKey} = data
-      setInfo({privateKey, publicKey })
-      setModal(true)
-      window.location.reload();
-    }
+    let { privateKey, publicKey } = data;
+    alert("privateKey: " + privateKey);
+    alert("publicKey: " + publicKey);
+
+    window.location.reload();
   };
 
   if (isAuthenticated) {
@@ -102,7 +101,9 @@ const Login = () => {
                           <CCol xs="1" md="12">
                             <CFormGroup row>
                               <CCol md="3">
-                                <CLabel htmlFor="yourPrivateKey">Private Key</CLabel>
+                                <CLabel htmlFor="yourPrivateKey">
+                                  Private Key
+                                </CLabel>
                               </CCol>
                               <CCol xs="12" md="9">
                                 <CInput
@@ -115,7 +116,9 @@ const Login = () => {
                             </CFormGroup>
                             <CFormGroup row>
                               <CCol md="3">
-                                <CLabel htmlFor="yourPublicKey">Public Key</CLabel>
+                                <CLabel htmlFor="yourPublicKey">
+                                  Public Key
+                                </CLabel>
                               </CCol>
                               <CCol xs="12" md="9">
                                 <CInput
@@ -152,8 +155,7 @@ const Login = () => {
                               method="post"
                               encType="multipart/form-data"
                               className="form-horizontal"
-                            >
-                            </CForm>
+                            ></CForm>
                           </CCardBody>
 
                           <CCardFooter>

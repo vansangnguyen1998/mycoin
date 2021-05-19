@@ -1,6 +1,6 @@
 /**
  * File: \src\redux\thunks\auth.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Tuesday, May 11th 2021, 10:01:18 pm
  * Author: Văn Sang
  * -----

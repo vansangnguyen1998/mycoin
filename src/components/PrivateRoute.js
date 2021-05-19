@@ -1,6 +1,6 @@
 /**
  * File: \src\components\privateRoute.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Thursday, May 13th 2021, 8:33:38 pm
  * Author: Văn Sang
  * -----

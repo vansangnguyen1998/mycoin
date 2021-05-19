@@ -62,7 +62,7 @@ const MainChartExample = ({dataAddress, ...attributes}) => {
               beginAtZero: true,
               maxTicksLimit: 5,
               stepSize: Math.ceil(250 / 5),
-              max: dataAddress.amountArr[dataAddress.amountArr.length - 1],
+              max: Math.max(...dataAddress.amountArr),
             },
             gridLines: {
               display: true,

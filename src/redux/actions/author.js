@@ -1,6 +1,6 @@
 /**
  * File: \src\redux\actions\author.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Wednesday, April 21st 2021, 2:13:21 pm
  * Author: Văn Sang
  * -----

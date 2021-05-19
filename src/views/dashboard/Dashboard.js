@@ -104,6 +104,7 @@ const Dashboard = () => {
         </CCardBody>
         <CCardFooter>
           <CRow className="text-center">
+            <CCol xs='12' md='12'>
             <CCard>
               <CCardHeader>
                 <div>Lịch sử giao dịch của tài khoản</div>
@@ -125,6 +126,7 @@ const Dashboard = () => {
                 />
               </CCardBody>
             </CCard>
+            </CCol>
           </CRow>
         </CCardFooter>
       </CCard>

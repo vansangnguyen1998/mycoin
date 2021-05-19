@@ -1,6 +1,6 @@
 /**
  * File: \src\reusable\Img.js
- * Project: TKDG
+ * Project: mycoin
  * Created Date: Wednesday, April 21st 2021, 3:35:43 pm
  * Author: Văn Sang
  * -----
